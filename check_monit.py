@@ -144,17 +144,21 @@ def find_existing_prefix(element, prefixes):
             return prefix
     return None
 
-def process_system_load(service):
+
+def process_system_load(service, sep_load=False):
     prefix = find_existing_prefix(service, ["system/load", "load"])
     if prefix is None:
         debug_print("Can't find load info for performance data")
-        return
-
+        return    
+    
     avg01 = service.find('%s/avg01'%prefix).text
     avg05 = service.find('%s/avg05'%prefix).text
     avg15 = service.find('%s/avg15'%prefix).text
-    perfdata.append('load1=%s load5=%s load15=%s'%(avg01,avg05,avg15))
-
+    if sep_load:
+        perfdata.append('load1=%s load5=%s load15=%s'%(avg01,avg05,avg15))
+    else:    
+        perfdata.append('load=%s;%s;%s'%(avg01,avg05,avg15))
+        
 def process_system_cpu(service):
     prefix = find_existing_prefix(service, ["system/cpu", "cpu"])
     if prefix is None:
@@ -312,7 +316,8 @@ def main():
     p.add_option("-v","--verbose", dest="verbose", action="store_true", default=False, help="Verbose plugin response")
     p.add_option("-M","--memory", dest="process_mem", action="store_true", default=False, help="Display memory performance data")
     p.add_option("-C","--cpu", dest="process_cpu", action="store_true", default=False, help="Display cpu performance data")
-    p.add_option("-L","--load", dest="process_la", action="store_true", default=False, help="Display load average performance data")
+    p.add_option("-L","--load", dest="process_la", action="store_true", default=False, help="Display load average 1min/5min/15min performance data")
+    p.add_option("-SL","--sep_load", dest="sep_proc_la", action="store_true", default=False, help="Display LA1, LA5 and LA15 values separately in performance data")
     p.add_option("-U","--uom", dest="uom", action="store_true", default=False, help="Display units of measure in performance data")
     p.add_option("-o", "--states-perfdata", dest="states_perfdata",
                  action="store_true", default=False,
@@ -343,7 +348,8 @@ def main():
             types_perfdata.append(svc_types[i])
     if opts.program_output:
         program_output = re.compile(opts.program_output)
-
+    if opts.process_la:
+        process_system_load(service, opts.sep_proc_la)
     if opts.maintenance and os.path.isfile(opts.maintenance):
         debug_print("Maintenance File: " + opts.maintenance)
         maintenance = True
