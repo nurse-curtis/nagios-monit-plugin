@@ -317,7 +317,7 @@ def main():
     p.add_option("-M","--memory", dest="process_mem", action="store_true", default=False, help="Display memory performance data")
     p.add_option("-C","--cpu", dest="process_cpu", action="store_true", default=False, help="Display cpu performance data")
     p.add_option("-L","--load", dest="process_la", action="store_true", default=False, help="Display load average 1min/5min/15min performance data")
-    p.add_option("-SL","--sep_load", dest="sep_proc_la", action="store_true", default=False, help="Display LA1, LA5 and LA15 values separately in performance data")
+    p.add_option("--sep-load", dest="sep_proc_la", action="store_true", default=False, help="Display LA1, LA5 and LA15 values separately in performance data")
     p.add_option("-U","--uom", dest="uom", action="store_true", default=False, help="Display units of measure in performance data")
     p.add_option("-o", "--states-perfdata", dest="states_perfdata",
                  action="store_true", default=False,
